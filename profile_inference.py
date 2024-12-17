@@ -2,9 +2,9 @@ import os
 import io
 import time
 import pstats
+import argparse
 import cProfile
 from pstats import SortKey
-from example_inference import main
 
 
 def profile_function(func, *args, **kwargs):
@@ -23,9 +23,32 @@ def profile_function(func, *args, **kwargs):
     return result
 
 
-def profiled_main():
-    return profile_function(main)
+def profiled_main(model_version):
+    if model_version == "RMBG-1.4":
+        from inference_1_4 import main
+
+        return profile_function(main)
+    elif model_version == "RMBG-2.0":
+        from inference_2_0 import main
+
+        return profile_function(main)
+    else:
+        raise ValueError(f"Invalid model version: {model_version}")
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model-version",
+        "-m",
+        type=str,
+        default="RMBG-1.4",
+        choices=["RMBG-1.4", "RMBG-2.0"],
+        help="Matting method to use (default: 'RMBG-1.4')",
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    profiled_main()
+    args = parse_arguments()
+    profiled_main(args.model_version)

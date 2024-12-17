@@ -5,3 +5,8 @@ numpy
 typing
 scikit-image
 huggingface_hub
+safetensors
+transformers>=4.39.1
+matplotlib
+kornia
+timm
